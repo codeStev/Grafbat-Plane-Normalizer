@@ -1,13 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Python program to create
-# a file explorer in Tkinter
-# import all components
-# from the tkinter library
 import functools
 import os
 from datetime import datetime
 from tkinter import *
-# import filedialog module
 from tkinter import filedialog
 
 # Function for opening the
@@ -61,7 +56,6 @@ def processFile():
             elif line.startswith('TT', 2, 4):
                 texts[len(texts) - 1] += line
             else:
-                # print(othercounter)
                 if len(others) - 1 < othercounter:
                     others.append(line)
                 else:
@@ -72,7 +66,6 @@ def processFile():
         textPointDic = {}
         textLineDic = {}
         for pointLine in pointLines:
-            # print(get_PointId_from_PointLine(point))
             pointId = get_Id_from_line(pointLine)
             pointDict[pointId] = pointLine
         for textLine in texts:
@@ -85,7 +78,6 @@ def processFile():
         for line in lines:
             lineId = get_Id_from_line(line)
             plane = get_plane(line)
-            # print(line+ "....."+plane)
             if textLineDic.get(lineId) is not None:
                 textLineDic[lineId] = set_plane(textLineDic.get(lineId, plane))
             pointList = get_points(line)
@@ -98,7 +90,6 @@ def processFile():
                     seenPoints.append(point)
 
         # merge changes
-        # sorted(lines, key=functools.cmp_to_key(line_cmp), reverse=True)
         stringPoints = sorted({str(value) for key, value in pointDict.items()}, key=functools.cmp_to_key(line_cmp_id))
         stringPoints = ''.join(stringPoints)
         lines = ''.join(sorted(lines, key=functools.cmp_to_key(line_cmp_id)))
@@ -111,25 +102,11 @@ def processFile():
 
         newFileText = others[0] + stringPoints + lines + stringTextPoints + stringTextLines + others[1]
         print(len(others))
-        # print(newFileText)
         f = open(os.path.basename(file.name).split('.')[0] + "_new.out", 'w', encoding='cp1252')
         f.write(newFileText)
         endTime = datetime.now()
         print(endTime)
         print(endTime - startTime)
-        # for key,value in pointDict.items():
-        #    print(value)
-        # for key,value in textLineDic.items():
-        #     print(value)
-        # for key,value in textPointDic.items():
-        #     print(value)
-    #  print(len(others))
-    #  print(others)
-    # for line in lines:
-    #  print(line)
-    # print(points)
-    # for text in texts:
-    #  print(text)
 
 
 def line_cmp_prio(a, b):
@@ -195,13 +172,6 @@ def get_LineId_from_TextLine(line):
 
 
 def set_plane(line, plane):
-    # temp = line.split(':')[1].split(',')[1].split('.')
-    # temp[0]= plane
-    # temp2 = line.split(',')
-    # temp2[1]= temp[0]+'.'+temp[1]
-    # temp2 = ','.join(temp)
-    # print(temp)
-    # return temp2
     return re.sub(',[0-9]+', ',' + plane, line, 1)
 
 
@@ -227,12 +197,7 @@ button_format = Button(window,
                        text="umsetzen",
                        command=processFile)
 
-# Grid method is chosen for placing
-# the widgets at respective positions
-# in a table like structure by
-# specifying rows and columns
 label_file_explorer.grid(column=1, row=1)
-
 button_explore.grid(column=1, row=2)
 button_format.grid(column=1, row=3)
 
