@@ -5,16 +5,28 @@ from datetime import datetime
 from tkinter import *
 from tkinter import filedialog
 
+
 # Function for opening the
 # file explorer window
-umlaute = {"ö": 148}
+def readPrioConfig():
+    global priolist
+    prioFile = open("prioKonfiguration.txt")
+    if prioFile is None:
+        label_file_explorer.configure(text="Keine Datei ausgewaehlt")
+        raise FileNotFoundError("Die Datei prioKonfiguration.txt konnte nicht gefunden werden.")
+    for line in prioFile:
+        if line.strip():
+            priolist.append(line.strip())
+
+
 file = None
-priolist = ['5296', '510', '511', '251', '481', '484', '1209', '253']
+priolist = []
+readPrioConfig()
+print(priolist)
 
 
 def browseFiles():
     global file
-    filename = None
     filename = filedialog.askopenfilename(initialdir="/",
                                           title="Datei auswaehlen",
                                           filetypes=(("Dateien",
@@ -107,6 +119,7 @@ def processFile():
         endTime = datetime.now()
         print(endTime)
         print(endTime - startTime)
+        label_file_explorer.configure(text="Fertig")
 
 
 def line_cmp_prio(a, b):
