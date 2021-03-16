@@ -107,12 +107,6 @@ def processFile():
         stringPoints = sorted({str(value) for key, value in pointDict.items()}, key=functools.cmp_to_key(line_cmp_id))
         stringPoints = ''.join(stringPoints)
         lines = ''.join(sorted(lines, key=functools.cmp_to_key(line_cmp_id)))
-        # stringTextPoints = sorted({str(value) for key, value in textPointDic.items()},
-        #                          key=functools.cmp_to_key(line_cmp_id))
-        # stringTextPoints = ''.join(stringTextPoints)
-        # stringTextLines = sorted({str(value) for key, value in textLineDic.items()},
-        #                          key=functools.cmp_to_key(line_cmp_id))
-        # stringTextLines = ''.join(stringTextLines)
         listTexts = sorted(
             {str(value) for value in (list(textLineDic.values()) + list(textPointDic.values()) + list(textFloatDic))},
             key=functools.cmp_to_key(line_cmp_id))
