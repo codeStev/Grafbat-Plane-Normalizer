@@ -53,7 +53,6 @@ def processFile():
         othercounter = 0
         for line in file:
             if line.startswith('LI', 0, 2):
-
                 lines.append(line)
             elif line.startswith('PK', 0, 2):
                 pointLines.append(line)
@@ -61,11 +60,11 @@ def processFile():
                 if len(texts) == 0:
                     othercounter += 1
                 texts.append(line)
-            elif line.startswith('TX', 2, 4):
+            elif line.strip().startswith('TX', 0, 2):
                 texts[len(texts) - 1] += line
-            elif line.startswith('TR', 2, 4):
+            elif line.strip().startswith('TR', 0, 2):
                 texts[len(texts) - 1] += line
-            elif line.startswith('TT', 2, 4):
+            elif line.strip().startswith('TT', 0, 2):
                 texts[len(texts) - 1] += line
             else:
                 if len(others) - 1 < othercounter:
@@ -77,6 +76,7 @@ def processFile():
         pointDict = {}
         textPointDic = {}
         textLineDic = {}
+        textFloatDic = []
         for pointLine in pointLines:
             pointId = get_Id_from_line(pointLine)
             pointDict[pointId] = pointLine
@@ -87,6 +87,8 @@ def processFile():
                 textPointDic[pointKey] = textLine
             elif pointLine is not None:
                 textLineDic[pointLine] = textLine
+            else:
+                textFloatDic.append(textLine)
         for line in lines:
             lineId = get_Id_from_line(line)
             plane = get_plane(line)
@@ -105,14 +107,18 @@ def processFile():
         stringPoints = sorted({str(value) for key, value in pointDict.items()}, key=functools.cmp_to_key(line_cmp_id))
         stringPoints = ''.join(stringPoints)
         lines = ''.join(sorted(lines, key=functools.cmp_to_key(line_cmp_id)))
-        stringTextPoints = sorted({str(value) for key, value in textPointDic.items()},
-                                  key=functools.cmp_to_key(line_cmp_id))
-        stringTextPoints = ''.join(stringTextPoints)
-        stringTextLines = sorted({str(value) for key, value in textLineDic.items()},
-                                 key=functools.cmp_to_key(line_cmp_id))
-        stringTextLines = ''.join(stringTextLines)
+        # stringTextPoints = sorted({str(value) for key, value in textPointDic.items()},
+        #                          key=functools.cmp_to_key(line_cmp_id))
+        # stringTextPoints = ''.join(stringTextPoints)
+        # stringTextLines = sorted({str(value) for key, value in textLineDic.items()},
+        #                          key=functools.cmp_to_key(line_cmp_id))
+        # stringTextLines = ''.join(stringTextLines)
+        listTexts = sorted(
+            {str(value) for value in (list(textLineDic.values()) + list(textPointDic.values()) + list(textFloatDic))},
+            key=functools.cmp_to_key(line_cmp_id))
 
-        newFileText = others[0] + stringPoints + lines + stringTextPoints + stringTextLines + others[1]
+        stringTexts = ''.join(listTexts)
+        newFileText = others[0] + stringPoints + lines + stringTexts + others[1]
         print(len(others))
         f = open(os.path.basename(file.name).split('.')[0] + "_new.out", 'w', encoding='cp1252')
         f.write(newFileText)
@@ -126,7 +132,9 @@ def line_cmp_prio(a, b):
     global priolist
     a_cut = get_prio(a)
     b_cut = get_prio(b)
-    if priolist.index(a_cut) < priolist.index(b_cut):
+    if a_cut not in priolist or b_cut not in priolist:
+        return 1
+    elif priolist.index(a_cut) < priolist.index(b_cut):
         return 1
     else:
         return -1
