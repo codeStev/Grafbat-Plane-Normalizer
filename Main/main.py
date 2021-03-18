@@ -82,7 +82,6 @@ def processFile():
         seenPoints = []
         pointDict = {}
         textPointDic = {}
-        textBonusDic = {}
         textLineDic = {}
         textFloatDic = []
         for pointLine in pointLines:
