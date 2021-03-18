@@ -50,6 +50,7 @@ def processFile():
         lines = []
         pointLines = []
         texts = []
+        pointBonus = {}
         othercounter = 0
         for line in file:
             if line.startswith('LI', 0, 2):
@@ -66,6 +67,12 @@ def processFile():
                 texts[len(texts) - 1] += line
             elif line.strip().startswith('TT', 0, 2):
                 texts[len(texts) - 1] += line
+            elif line.strip().startswith('F', 0, 1):
+                pointId = get_Id_from_line(pointLines[len(pointLines) - 1])
+                if pointBonus.get(pointId) is not None:
+                    pointBonus[pointId] = pointBonus[pointId] + line
+                else:
+                    pointBonus[pointId] = line
             else:
                 if len(others) - 1 < othercounter:
                     others.append(line)
@@ -75,6 +82,7 @@ def processFile():
         seenPoints = []
         pointDict = {}
         textPointDic = {}
+        textBonusDic = {}
         textLineDic = {}
         textFloatDic = []
         for pointLine in pointLines:
@@ -105,6 +113,9 @@ def processFile():
 
         # merge changes
         stringPoints = sorted({str(value) for key, value in pointDict.items()}, key=functools.cmp_to_key(line_cmp_id))
+        for i in range(0, len(stringPoints) - 1):
+            if pointBonus.get(get_Id_from_line(stringPoints[i])) is not None:
+                stringPoints[i] = stringPoints[i] + pointBonus.get(get_Id_from_line(stringPoints[i]))
         stringPoints = ''.join(stringPoints)
         lines = ''.join(sorted(lines, key=functools.cmp_to_key(line_cmp_id)))
         listTexts = sorted(
@@ -155,6 +166,10 @@ def get_points(line):
 
 # Create the root window
 window = Tk()
+
+
+def appendLine(toAppend):
+    return lambda f: f + toAppend
 
 
 def get_prio(line):
